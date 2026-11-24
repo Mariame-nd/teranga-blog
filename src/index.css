@@ -1,34 +1,716 @@
-/* Feuille de style de départ : le projet évalue React, pas le CSS.
-   Tu peux l'utiliser telle quelle, la modifier, ou demander à une IA de réécrire tout le CSS
-   et de placer les classes (className) dans ton JSX : c'est la seule aide complète autorisée. */
+/* =========================================================
+   Teranga Blog : marine, orange et sable chaud (couleurs du logo)
+   ========================================================= */
+
 :root {
-  --fond: #f7f8fa;
-  --texte: #1f1f1f;
-  --discret: #666666;
-  --accent: #0b6e4f;
-  --bord: #dddddd;
+  --marine: #0a1b33;
+  --bleu: #1d4e89;
+  --bleu-clair: #e8f0fb;
+  --orange: #ff7a1a;
+  --orange-fonce: #e0620a;
+  --dore: #f9b233;
+  --orange-pale: #fff1e3;
+  --sable: #fbf6ef;
+  --sable-fonce: #f3e9da;
+  --blanc: #ffffff;
+  --texte: #1a2438;
+  --discret: #6b7487;
+  --bord: #eadfce;
   --erreur: #b3261e;
+  --erreur-fond: #fdecea;
+  --rayon: 16px;
+  --ombre: 0 1px 2px rgba(10, 27, 51, .05), 0 6px 18px rgba(10, 27, 51, .07);
+  --ombre-forte: 0 14px 34px rgba(10, 27, 51, .18);
 }
-* { box-sizing: border-box; }
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  font-family: system-ui, Arial, sans-serif;
-  background: var(--fond);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
   color: var(--texte);
-  line-height: 1.6;
+  line-height: 1.65;
+  background-color: var(--sable);
+  background-image:
+    radial-gradient(circle at 12% -5%, rgba(255, 122, 26, .12), transparent 38%),
+    radial-gradient(circle at 95% 8%, rgba(29, 78, 137, .10), transparent 35%);
+  background-repeat: no-repeat;
+  -webkit-font-smoothing: antialiased;
 }
-.conteneur { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem; }
-.barre-nav { background: #fff; border-bottom: 1px solid var(--bord); }
-.barre-nav .conteneur { display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; }
-.barre-nav a { color: var(--texte); text-decoration: none; padding: .25rem 0; }
-.barre-nav a.active { color: var(--accent); border-bottom: 2px solid var(--accent); font-weight: 600; }
-.grille { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-.carte { background: #fff; border: 1px solid var(--bord); border-radius: 8px; padding: 1rem; }
-.carte h3 { margin-top: 0; text-transform: capitalize; }
-.bouton { background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: .5rem .9rem; cursor: pointer; }
-.bouton.secondaire { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
-.champ { display: block; width: 100%; padding: .5rem; margin: .25rem 0 .75rem; border: 1px solid var(--bord); border-radius: 6px; font: inherit; }
-.etat-chargement { color: var(--discret); font-style: italic; }
-.etat-erreur { color: var(--erreur); border: 1px solid var(--erreur); border-radius: 6px; padding: .75rem; }
-.message-erreur { color: var(--erreur); font-size: .9rem; margin: -.5rem 0 .75rem; }
-.discret { color: var(--discret); font-size: .9rem; }
+
+h1,
+h2,
+h3 {
+  color: var(--marine);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 2.1rem;
+  margin: 0 0 1.2rem;
+  font-weight: 800;
+}
+
+h2 {
+  font-size: 1.45rem;
+  margin: 2.4rem 0 1.1rem;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.1rem;
+  margin: 0 0 .6rem;
+  font-weight: 700;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+a {
+  color: var(--orange-fonce);
+  transition: color .2s;
+}
+
+a:hover {
+  color: var(--bleu);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(255, 122, 26, .55);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Titres de l'API : seule la première lettre en majuscule */
+.carte h3,
+.detail h1 {
+  text-transform: none;
+}
+
+.carte h3::first-letter,
+.detail h1::first-letter {
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   Structure de la page
+   ========================================================= */
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.conteneur {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 1.2rem;
+}
+
+.contenu {
+  flex: 1;
+  padding-top: 2.2rem;
+  padding-bottom: 3rem;
+}
+
+/* =========================================================
+   Barre de navigation (logo à gauche, lien actif mis en valeur)
+   ========================================================= */
+
+.barre-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, .94);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 14px rgba(10, 27, 51, .08);
+}
+
+.barre-nav::after {
+  content: "";
+  display: block;
+  height: 4px;
+  background: linear-gradient(90deg, var(--orange), var(--dore) 35%, var(--bleu) 100%);
+}
+
+.barre-nav .conteneur {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .8rem;
+  padding-top: .6rem;
+  padding-bottom: .6rem;
+}
+
+.logo-lien {
+  display: inline-flex;
+}
+
+.logo {
+  height: 46px;
+  display: block;
+}
+
+.liens {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem;
+}
+
+.liens a {
+  color: var(--marine);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: .95rem;
+  padding: .5rem 1rem;
+  border-radius: 999px;
+  transition: background .2s, color .2s, box-shadow .2s;
+}
+
+.liens a:hover {
+  background: var(--orange-pale);
+  color: var(--orange-fonce);
+}
+
+.liens a.active {
+  color: var(--blanc);
+  background: linear-gradient(135deg, var(--marine), var(--bleu));
+  box-shadow: 0 6px 14px rgba(29, 78, 137, .35);
+}
+
+.compteur {
+  display: inline-block;
+  min-width: 1.5rem;
+  margin-left: .25rem;
+  padding: 0 .45rem;
+  text-align: center;
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.5rem;
+  color: var(--blanc);
+  background: linear-gradient(135deg, var(--orange), var(--orange-fonce));
+  border-radius: 999px;
+}
+
+/* =========================================================
+   Page d'accueil
+   ========================================================= */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 3.4rem 2.4rem;
+  color: var(--blanc);
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, .035) 0 14px, transparent 14px 28px),
+    linear-gradient(135deg, var(--marine) 0%, var(--bleu) 100%);
+  border-radius: 22px;
+  box-shadow: var(--ombre-forte);
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero::before {
+  right: -70px;
+  top: -90px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 122, 26, .7), transparent 70%);
+}
+
+.hero::after {
+  right: 110px;
+  bottom: -120px;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(249, 178, 51, .35), transparent 70%);
+}
+
+.hero h1 {
+  position: relative;
+  color: var(--blanc);
+  font-size: 2.7rem;
+  margin-bottom: .7rem;
+}
+
+.hero p {
+  position: relative;
+  max-width: 540px;
+  color: #d3def0;
+  font-size: 1.08rem;
+  margin-bottom: 1.6rem;
+}
+
+.hero .bouton {
+  position: relative;
+}
+
+/* Titres de section avec un trait orange et doré */
+.contenu h2 {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+}
+
+.contenu h2::before {
+  content: "";
+  flex-shrink: 0;
+  width: 6px;
+  height: 1.4rem;
+  background: linear-gradient(180deg, var(--orange), var(--dore));
+  border-radius: 3px;
+}
+
+/* =========================================================
+   Grille et cartes
+   ========================================================= */
+
+.grille {
+  display: grid;
+  gap: 1.4rem;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+}
+
+.carte {
+  background: var(--blanc);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon);
+  padding: 1.4rem;
+  box-shadow: var(--ombre);
+}
+
+.carte-article {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+
+.carte-article::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--orange), var(--dore));
+  transform: scaleX(.22);
+  transform-origin: left;
+  transition: transform .35s;
+}
+
+.carte-article:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--ombre-forte);
+  border-color: #f2c99c;
+}
+
+.carte-article:hover::before {
+  transform: scaleX(1);
+}
+
+.carte-article h3 {
+  margin-top: .45rem;
+}
+
+.carte-article h3 a {
+  color: var(--marine);
+  text-decoration: none;
+}
+
+.carte-article h3 a:hover {
+  color: var(--orange-fonce);
+}
+
+.extrait {
+  flex: 1;
+  margin: 0 0 1.2rem;
+  color: var(--discret);
+  font-size: .96rem;
+}
+
+.carte-article .bouton {
+  width: 100%;
+  text-align: center;
+}
+
+/* =========================================================
+   Boutons
+   ========================================================= */
+
+.bouton {
+  display: inline-block;
+  padding: .6rem 1.2rem;
+  font: inherit;
+  font-weight: 700;
+  font-size: .95rem;
+  text-decoration: none;
+  color: var(--blanc);
+  background: linear-gradient(135deg, var(--orange), var(--orange-fonce));
+  border: 2px solid var(--orange-fonce);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: filter .2s, color .2s, background .2s, transform .15s, box-shadow .2s;
+}
+
+.bouton:hover {
+  color: var(--blanc);
+  filter: brightness(1.06);
+  box-shadow: 0 8px 18px rgba(255, 122, 26, .4);
+}
+
+.bouton:active {
+  transform: scale(.97);
+}
+
+.bouton.secondaire {
+  color: var(--orange-fonce);
+  background: var(--blanc);
+  border-color: var(--orange);
+}
+
+.bouton.secondaire:hover {
+  color: var(--blanc);
+  background: linear-gradient(135deg, var(--orange), var(--orange-fonce));
+}
+
+/* =========================================================
+   Champs et formulaires
+   ========================================================= */
+
+.champ {
+  display: block;
+  width: 100%;
+  margin: .35rem 0 1.1rem;
+  padding: .75rem 1rem;
+  font: inherit;
+  color: var(--texte);
+  background: var(--blanc);
+  border: 1.5px solid var(--bord);
+  border-radius: 10px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.champ:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgba(255, 122, 26, .2);
+}
+
+textarea.champ {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.recherche {
+  max-width: 480px;
+  margin-bottom: 1.8rem;
+  box-shadow: var(--ombre);
+}
+
+.formulaire {
+  margin-top: 2rem;
+}
+
+.formulaire h3 {
+  margin-top: 0;
+  margin-bottom: 1.1rem;
+  font-size: 1.2rem;
+}
+
+.formulaire label {
+  display: block;
+  font-weight: 700;
+  font-size: .92rem;
+  color: var(--marine);
+}
+
+.message-erreur {
+  margin: -.4rem 0 1rem;
+  padding: .55rem .8rem;
+  font-size: .9rem;
+  color: var(--erreur);
+  background: var(--erreur-fond);
+  border-left: 4px solid var(--erreur);
+  border-radius: 6px;
+}
+
+/* =========================================================
+   Détail d'un article et commentaires
+   ========================================================= */
+
+.retour {
+  display: inline-block;
+  margin-bottom: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.detail h1 {
+  font-size: 2.3rem;
+}
+
+.texte {
+  margin: 0 0 1.4rem;
+  padding: 1.4rem 1.6rem;
+  font-size: 1.12rem;
+  background: var(--blanc);
+  border-left: 5px solid var(--orange);
+  border-radius: 0 var(--rayon) var(--rayon) 0;
+  box-shadow: var(--ombre);
+}
+
+.commentaires {
+  display: grid;
+  gap: .9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.commentaire {
+  padding: 1rem 1.2rem;
+  background: var(--blanc);
+  border: 1px solid var(--bord);
+  border-left: 4px solid var(--bleu);
+  border-radius: 12px;
+  box-shadow: var(--ombre);
+}
+
+.commentaire strong {
+  color: var(--bleu);
+}
+
+.commentaire p {
+  margin: .35rem 0 0;
+}
+
+/* =========================================================
+   Auteurs
+   ========================================================= */
+
+.carte-auteur {
+  text-align: center;
+  transition: transform .25s, box-shadow .25s;
+}
+
+.carte-auteur:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--ombre-forte);
+}
+
+.carte-auteur h3 a {
+  color: var(--marine);
+  text-decoration: none;
+}
+
+.carte-auteur h3 a:hover {
+  color: var(--orange-fonce);
+}
+
+.carte-auteur p {
+  margin-bottom: .2rem;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 62px;
+  margin: 0 auto .9rem;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--blanc);
+  background: linear-gradient(135deg, var(--marine), var(--bleu));
+  border: 3px solid var(--dore);
+  border-radius: 50%;
+  box-shadow: 0 6px 16px rgba(29, 78, 137, .35);
+}
+
+.avatar.grand {
+  width: 92px;
+  height: 92px;
+  margin: 0;
+  font-size: 2.4rem;
+  flex-shrink: 0;
+}
+
+.fiche-auteur {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 1.8rem;
+}
+
+.fiche-auteur h1 {
+  margin-bottom: .3rem;
+}
+
+.fiche-auteur p {
+  margin: .2rem 0;
+}
+
+/* =========================================================
+   Messages d'état (chargement et erreur)
+   ========================================================= */
+
+.etat-chargement {
+  padding: 1.5rem 0;
+  font-style: italic;
+  color: var(--bleu);
+  animation: pulsation 1.4s ease-in-out infinite;
+}
+
+@keyframes pulsation {
+
+  0%,
+  100% {
+    opacity: .45;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.etat-erreur {
+  padding: 1rem 1.2rem;
+  color: var(--erreur);
+  font-weight: 600;
+  background: var(--erreur-fond);
+  border: 1px solid var(--erreur);
+  border-left-width: 5px;
+  border-radius: 10px;
+}
+
+.discret {
+  color: var(--discret);
+  font-size: .95rem;
+}
+
+/* =========================================================
+   Page 404 et connexion
+   ========================================================= */
+
+.page-404 {
+  padding: 3.5rem 0;
+  text-align: center;
+}
+
+.page-404 h1 {
+  margin: 0;
+  font-size: 6.5rem;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--orange), var(--bleu));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.page-404 p {
+  margin: .6rem 0 1.6rem;
+  font-size: 1.15rem;
+  color: var(--discret);
+}
+
+.boite-connexion {
+  max-width: 440px;
+  margin: 2.5rem auto;
+  padding: 2.2rem;
+  text-align: center;
+}
+
+/* =========================================================
+   Pied de page
+   ========================================================= */
+
+.pied {
+  padding: 1.5rem 0;
+  font-size: .9rem;
+  text-align: center;
+  color: #b7c3d9;
+  background: var(--marine);
+  border-top: 4px solid var(--orange);
+}
+
+/* =========================================================
+   Version mobile
+   ========================================================= */
+
+@media (max-width: 640px) {
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  .contenu {
+    padding-top: 1.4rem;
+  }
+
+  .barre-nav .conteneur {
+    justify-content: center;
+  }
+
+  .liens {
+    justify-content: center;
+  }
+
+  .liens a {
+    padding: .4rem .75rem;
+    font-size: .9rem;
+  }
+
+  .hero {
+    padding: 2rem 1.3rem;
+    border-radius: 16px;
+  }
+
+  .hero h1 {
+    font-size: 1.9rem;
+  }
+
+  .detail h1 {
+    font-size: 1.7rem;
+  }
+
+  .fiche-auteur {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .page-404 h1 {
+    font-size: 4.5rem;
+  }
+
+  .grille {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
